@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "190698207818",
+    "firebase_url": "https://waraymusicapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "waraymusicapp",
+    "storage_bucket": "waraymusicapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190698207818:android:704950576ef1568c3a44b3",
+        "android_client_info": {
+          "package_name": "com.waraymusicapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190698207818-q808sjaakpc32ffrq7i9sr2fubmdj31q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU-Xs2R7q9lRgVtVHyN1_crAPivkNXfBw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190698207818-q808sjaakpc32ffrq7i9sr2fubmdj31q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
