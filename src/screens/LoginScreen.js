@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import auth from '@react-native-firebase/auth';
+import SocialSignInButtons from '../components/SocialSignInButtons';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -63,7 +64,6 @@ const LoginScreen = () => {
           secureTextEntry
         />
       </View>
-
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
@@ -85,12 +85,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#222831',
   },
   inputContainer: {
     width: '80%',
   },
   input: {
-    backgroundColor: 'white',
+    backgroundColor: '#52626A',
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,

@@ -281,9 +281,8 @@ const MusicPlayerScreen = () => {
             <Ionicons name="share-outline" size={30} color="#888888" />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate('AddEditSongScreen')}>
-            <Ionicons name="ellipsis-horizontal" size={30} color="#888888" />
+          <TouchableOpacity onPress={() => navigation.navigate('MenuScreen')}>
+            <Ionicons name="menu" size={30} color="#888888" />
           </TouchableOpacity>
         </View>
       </View>
