@@ -12,6 +12,7 @@ import React, {useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import {firebase} from '@react-native-firebase/database';
+import {AuthContext} from '../context/AuthContext';
 
 const Item = ({item, onPress, backgroundColor, textColor}) => (
   <TouchableOpacity onPress={onPress} style={styles.itemList}>
@@ -39,7 +40,7 @@ const MenuScreen = () => {
         setUser(snapshot.val());
       });
 
-    console.log(user.image_url);
+    console.log('user image:', user.image_url);
   };
 
   const renderItem = ({item}) => {
