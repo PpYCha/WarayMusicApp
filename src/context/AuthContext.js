@@ -14,6 +14,8 @@ export const AuthProvider = ({children}) => {
       {{
         user,
         setUser,
+        songList,
+        setSongList,
         login: async (email, password) => {
           try {
             await auth().signInWithEmailAndPassword(email, password);

@@ -1,7 +1,13 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-const CustomButton = ({onPress, text}) => {
+const CustomButton = ({
+  onPress,
+  text,
+  backgroundColor,
+  button_type,
+  ...rest
+}) => {
   return (
     // <Pressable
     //   onPress={onPress}
@@ -19,30 +25,53 @@ const CustomButton = ({onPress, text}) => {
     //     {text}
     //   </Text>
     // </Pressable>
-
-    <View style={{flex: 1}}>
-      <TouchableOpacity title="SIGN IN" style={styles.button} onPress={onPress}>
-        <Text style={styles.text}>{text} </Text>
-      </TouchableOpacity>
-    </View>
+    <>
+      {button_type === 'Secondary' ? (
+        <View>
+          <TouchableOpacity
+            title={text}
+            style={[
+              {backgroundColor: backgroundColor},
+              styles.button_secondary,
+              styles.button,
+            ]}
+            onPress={onPress}>
+            <Text style={styles.text}>{text} </Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={{flex: 1}}>
+          <TouchableOpacity
+            title={text}
+            style={[{backgroundColor: backgroundColor}, styles.button]}
+            onPress={onPress}>
+            <Text style={styles.text}>{text} </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    marginTop: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
-    backgroundColor: '#68a0cf',
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: '#fff',
-
     alignItems: 'center',
+    justifyContent: 'center',
+    padding: 13,
+    borderColor: '#fff',
+    borderWidth: 0,
+    borderRadius: 10,
   },
   text: {
-    fontSize: 25,
+    fontSize: 20,
     color: '#ffffff',
+    fontWeight: '700',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  button_secondary: {
+    marginBottom: 10,
   },
 });
 

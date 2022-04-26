@@ -19,6 +19,9 @@ import {useNavigation} from '@react-navigation/core';
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
 import {firebase} from '@react-native-firebase/database';
+import {Picker} from '@react-native-picker/picker';
+import {Container} from 'native-base';
+import CustomInput from '../components/CustomInput';
 
 const Register = () => {
   const navigation = useNavigation();
@@ -28,13 +31,9 @@ const Register = () => {
   const [name, setName] = useState('');
   const [image, setImage] = useState(null);
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  const [userType, setUserType] = useState();
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  const [items, setItems] = useState([
-    {label: 'Listener', value: 'Listener'},
-    {label: 'Composer', value: 'Composer'},
-  ]);
 
   const handleSignUp = async () => {
     const imageUrl = await uploadImage();
@@ -45,22 +44,26 @@ const Register = () => {
       auth()
         .createUserWithEmailAndPassword(email, password)
         .then(userCredentials => {
+          const uid = auth().currentUser.uid;
+          console.log('id ine:', uid);
           const reference = firebase
             .app()
             .database(
               'https://waraymusicapp-default-rtdb.asia-southeast1.firebasedatabase.app/',
             )
-            .ref(`/users/${auth().currentUser.uid}`)
-            .add({
+            .ref(`/users/${uid}`)
+            .set({
               email: email,
               password: password,
               name: name,
-              user_type: value,
+              user_type: userType,
               image_url: imageUrl,
             });
+
           Alert.alert('Success', 'Registered Successfully');
           navigation.replace('MusicPlayerScreen');
-        });
+        })
+        .catch(error => Alert.alert('Alert', `${error}`));
     } else {
       Alert.alert('Alert', 'Email and Password must not be empty');
     }
@@ -90,8 +93,9 @@ const Register = () => {
     const name = filename.split('.').slice(0, -1).join('.');
     filename = name + Date.now() + '.' + extension;
 
-    setUploading(true);
+    true;
     setTransferred(0);
+    setUploading;
 
     const storageRef = storage().ref(`photos/profile/${filename}`);
     const task = storageRef.putFile(uploadUri);
@@ -127,68 +131,71 @@ const Register = () => {
   return (
     <ScrollView>
       <View style={styles.mainView}>
-        <View style={{flex: 1, justifyContent: 'center'}}>
-          <View style={styles.formContainer}>
-            <View>
-              <Text style={styles.text}>Email</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={text => setEmail(text)}
-                value={email}
-              />
-            </View>
-            <View>
-              <Text style={styles.text}>Password</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={text => setPassword(text)}
-                value={password}
-                secureTextEntry
-              />
-            </View>
-            <View>
-              <Text style={styles.text}>Name</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={text => setName(text)}
-                value={name}
-              />
-            </View>
-            <View>
-              <DropDownPicker
-                open={open}
-                value={value}
-                items={items}
-                setOpen={setOpen}
-                setValue={setValue}
-                setItems={setItems}
-                style={{marginTop: 5}}
-              />
-            </View>
-          </View>
-          <CustomButton
-            text={'Upload Picture'}
-            onPress={choosePhotoFromLibrary}
-          />
-          <View style={styles.imageWrapper}>
-            {image != null ? (
-              <Image style={styles.image} source={{uri: image}} />
-            ) : (
-              <Image
-                style={{width: '100%', height: 150}}
-                source={require('../assets/img/avatar-default.png')}
-                resizeMode="contain"
-              />
-            )}
-          </View>
-          <CustomButton text={'SIGN UP'} onPress={handleSignUp} />
+        <View style={styles.container}>
+          <Text style={styles.headerText}>SIGN UP</Text>
+
           <View>
-            <TouchableOpacity
-              style={{marginTop: 10}}
-              onPress={() => navigation.replace('Login')}>
-              <Text>Already have an Account?</Text>
-            </TouchableOpacity>
+            <CustomInput
+              placeholder="Email"
+              onChangeText={text => setEmail(text)}
+              value={email}
+            />
+
+            <CustomInput
+              placeholder="Password"
+              onChangeText={text => setPassword(text)}
+              value={password}
+              secureTextEntry
+            />
+
+            <CustomInput
+              placeholder="Full Name"
+              onChangeText={text => setName(text)}
+              value={name}
+            />
+
+            <View style={styles.pickerContainer}>
+              <Picker
+                style={styles.pickerStyle}
+                selectedValue={userType}
+                onValueChange={itemValue => setUserType(itemValue)}>
+                <Picker.Item label="Please select an option.." value="0" />
+
+                <Picker.Item label="Listener" value="Listener" />
+                <Picker.Item label="Composer" value="Composer" />
+              </Picker>
+            </View>
           </View>
+        </View>
+        <CustomButton
+          text={'Choose Profile Picture'}
+          backgroundColor="gray"
+          onPress={choosePhotoFromLibrary}
+        />
+        <View style={styles.imageWrapper}>
+          {image != null ? (
+            <Image style={styles.image} source={{uri: image}} />
+          ) : (
+            <Image
+              style={{width: '100%', height: 150}}
+              source={require('../assets/img/avatar-default.png')}
+              resizeMode="contain"
+            />
+          )}
+        </View>
+        <CustomButton
+          text={'SIGN UP'}
+          backgroundColor="#42b72a"
+          onPress={handleSignUp}
+        />
+        <View>
+          <TouchableOpacity
+            style={{marginTop: 10}}
+            onPress={() => navigation.replace('Login')}>
+            <Text style={styles.alreadyHaveAnAccount}>
+              Already have an Account?
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -200,41 +207,44 @@ export default Register;
 const styles = StyleSheet.create({
   mainView: {
     flex: 1,
-    backgroundColor: '#ffffff',
-    padding: 30,
-    borderTopLeftRadius: 30,
-    borderTopEndRadius: 30,
-    borderBottomEndRadius: 50,
-    borderBottomLeftRadius: 50,
-    borderColor: 'gray',
-    borderWidth: 1,
+    backgroundColor: '#f0f2f5',
+    padding: 10,
   },
 
-  formContainer: {
+  container: {
     alignContent: 'center',
+    flex: 1,
   },
-  text: {
-    fontSize: 20,
-  },
-  input: {
-    height: 40,
-    marginTop: 10,
-    marginBottom: 10,
-    borderWidth: 1,
+
+  headerText: {
+    fontSize: 40,
+    textAlign: 'center',
+    justifyContent: 'center',
+    color: 'black',
     padding: 10,
+  },
+
+  pickerContainer: {
+    backgroundColor: '#ffffff',
     borderRadius: 10,
+    marginBottom: 15,
+  },
+  pickerStyle: {
+    color: 'gray',
   },
   imageWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
     margin: 5,
-    borderWidth: 1,
   },
   image: {
     height: 150,
     width: '100%',
 
     flex: 1,
+  },
+  alreadyHaveAnAccount: {
+    color: '#0000EE',
   },
 });

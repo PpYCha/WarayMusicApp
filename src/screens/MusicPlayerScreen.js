@@ -1,4 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useContext,
+  useCallback,
+} from 'react';
 import {
   View,
   Text,
@@ -25,10 +31,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
 import songs from '../model/data';
+import {firebase} from '@react-native-firebase/database';
+import database from '@react-native-firebase/database';
 
 const {width, height} = Dimensions.get('window');
 
-const setupPlayer = async () => {
+const setupPlayer = async songList => {
   try {
     await TrackPlayer.setupPlayer();
     await TrackPlayer.updateOptions({
@@ -40,9 +48,9 @@ const setupPlayer = async () => {
         Capability.Stop,
       ],
     });
-    await TrackPlayer.add(songs);
+    await TrackPlayer.add(songList);
   } catch (error) {
-    console.log(error);
+    console.log('setup player: ', error);
   }
 };
 
@@ -64,12 +72,15 @@ const MusicPlayerScreen = () => {
   const playBackState = usePlaybackState();
   const progress = useProgress();
   const navigation = useNavigation();
+  const [songList, setSongList] = useState();
   //   custom states
   const [songIndex, setsongIndex] = useState(0);
   const [repeatMode, setRepeatMode] = useState('off');
   const [trackTitle, setTrackTitle] = useState();
   const [trackArtist, setTrackArtist] = useState();
   const [trackArtwork, setTrackArtwork] = useState();
+  const [loading, setLoading] = useState(true);
+  const [sample, setSample] = useState(false);
   // custom referecnces
   const scrollX = useRef(new Animated.Value(0)).current;
   const songSlider = useRef(null);
@@ -120,27 +131,51 @@ const MusicPlayerScreen = () => {
     await TrackPlayer.skip(trackId);
   };
 
-  useEffect(() => {
-    try {
-      setupPlayer();
+  const fetchSongs = async () => {
+    let returnArr = [];
+    await database()
+      .ref('/songs')
+      .on('value', snapshot => {
+        snapshot.forEach(childSnapshot => {
+          let item = childSnapshot.val();
+          item.key = childSnapshot.key;
+          returnArr.push(item);
+        });
+        setSongList(returnArr);
+      });
+    setSample('Sampleine');
 
+    if (loading) {
+      setLoading(false);
+    }
+
+    console.log('List of songs', songList);
+  };
+
+  const loadTrack = () => {
+    fetchSongs();
+
+    try {
+      setupPlayer(songList);
       scrollX.addListener(({value}) => {
         //   console.log(`ScrollX : ${value} | Device Width : ${width} `);
-
         const index = Math.round(value / width);
         skipTo(index);
         setsongIndex(index);
-
         //   console.log(`Index : ${index}`);
       });
-
       return () => {
         scrollX.removeAllListeners();
         TrackPlayer.destroy();
       };
     } catch (error) {
-      console.log(error);
+      console.log('useEffect', error);
     }
+    setSample(true);
+  };
+
+  useEffect(() => {
+    fetchSongs();
   }, []);
 
   const skipToNext = () => {
@@ -171,121 +206,137 @@ const MusicPlayerScreen = () => {
 
   return (
     <SafeAreaView style={style.container}>
-      {/* music player section */}
-      <View style={style.mainContainer}>
-        {/* Image */}
-
-        <Animated.FlatList
-          ref={songSlider}
-          renderItem={renderSongs}
-          data={songs}
-          keyExtractor={item => item.id}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={16}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {x: scrollX},
-                },
-              },
-            ],
-            {useNativeDriver: true},
-          )}
-        />
-
-        {/* Title & Artist Name */}
+      {loading ? (
         <View>
-          <Text style={[style.songContent, style.songTitle]}>
-            {/* {songs[songIndex].title} */ trackTitle}
-          </Text>
-          <Text style={[style.songContent, style.songArtist]}>
-            {/* {songs[songIndex].artist} */ trackArtist}
-          </Text>
+          <Text>Hello</Text>
         </View>
+      ) : (
+        <>
+          {/* music player section */}
+          <View style={style.mainContainer}>
+            {/* Image */}
 
-        {/* songslider */}
-        <View>
-          <Slider
-            // style={style.progressBar}
-            value={progress.position}
-            minimumValue={0}
-            maximumValue={progress.duration}
-            thumbTintColor="#FFD369"
-            minimumTrackTintColor="#FFD369"
-            maximumTrackTintColor="#fff"
-            onSlidingComplete={async value => {
-              await TrackPlayer.seekTo(value);
-            }}
-          />
+            <Animated.FlatList
+              ref={songSlider}
+              renderItem={renderSongs}
+              data={songList}
+              keyExtractor={item => item.id}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              scrollEventThrottle={16}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {x: scrollX},
+                    },
+                  },
+                ],
+                {useNativeDriver: true},
+              )}
+            />
 
-          {/* Progress Durations */}
-          <View style={style.progressLevelDuraiton}>
-            <Text style={style.progressLabelText}>
-              {new Date(progress.position * 1000)
-                .toLocaleTimeString()
-                .substring(3)}
-            </Text>
-            <Text style={style.progressLabelText}>
-              {new Date((progress.duration - progress.position) * 1000)
-                .toLocaleTimeString()
-                .substring(3)}
-            </Text>
+            {/* Title & Artist Name */}
+            <View>
+              <Text style={[style.songContent, style.songTitle]}>
+                {/* {songs[songIndex].title} */ trackTitle}
+              </Text>
+              <Text style={[style.songContent, style.songArtist]}>
+                {/* {songs[songIndex].artist} */ trackArtist}
+              </Text>
+            </View>
+
+            {/* songslider */}
+            <View>
+              <Slider
+                // style={style.progressBar}
+                value={progress.position}
+                minimumValue={0}
+                maximumValue={progress.duration}
+                thumbTintColor="#FFD369"
+                minimumTrackTintColor="#FFD369"
+                maximumTrackTintColor="#fff"
+                onSlidingComplete={async value => {
+                  await TrackPlayer.seekTo(value);
+                }}
+              />
+
+              {/* Progress Durations */}
+              <View style={style.progressLevelDuraiton}>
+                <Text style={style.progressLabelText}>
+                  {new Date(progress.position * 1000)
+                    .toLocaleTimeString()
+                    .substring(3)}
+                </Text>
+                <Text style={style.progressLabelText}>
+                  {new Date((progress.duration - progress.position) * 1000)
+                    .toLocaleTimeString()
+                    .substring(3)}
+                </Text>
+              </View>
+            </View>
+
+            {/* music control */}
+            <View style={style.musicControlsContainer}>
+              <TouchableOpacity onPress={skipToPrevious}>
+                <Ionicons
+                  name="play-skip-back-outline"
+                  size={35}
+                  color="#FFD369"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => togglePlayBack(playBackState)}>
+                <Ionicons
+                  name={
+                    playBackState === State.Playing
+                      ? 'ios-pause-circle'
+                      : 'ios-play-circle'
+                  }
+                  size={75}
+                  color="#FFD369"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={skipToNext}>
+                <Ionicons
+                  name="play-skip-forward-outline"
+                  size={35}
+                  color="#FFD369"
+                />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        {/* music control */}
-        <View style={style.musicControlsContainer}>
-          <TouchableOpacity onPress={skipToPrevious}>
-            <Ionicons name="play-skip-back-outline" size={35} color="#FFD369" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => togglePlayBack(playBackState)}>
-            <Ionicons
-              name={
-                playBackState === State.Playing
-                  ? 'ios-pause-circle'
-                  : 'ios-play-circle'
-              }
-              size={75}
-              color="#FFD369"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={skipToNext}>
-            <Ionicons
-              name="play-skip-forward-outline"
-              size={35}
-              color="#FFD369"
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+          {/* bottom section */}
+          <View style={style.bottomSection}>
+            <View style={style.bottomIconContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  loadTrack();
+                }}>
+                <Ionicons name="heart-outline" size={30} color="#888888" />
+              </TouchableOpacity>
 
-      {/* bottom section */}
-      <View style={style.bottomSection}>
-        <View style={style.bottomIconContainer}>
-          <TouchableOpacity onPress={() => {}}>
-            <Ionicons name="heart-outline" size={30} color="#888888" />
-          </TouchableOpacity>
+              <TouchableOpacity onPress={changeRepeatMode}>
+                <MaterialCommunityIcons
+                  name={`${repeatIcon()}`}
+                  size={30}
+                  color={repeatMode !== 'off' ? '#FFD369' : '#888888'}
+                />
+              </TouchableOpacity>
 
-          <TouchableOpacity onPress={changeRepeatMode}>
-            <MaterialCommunityIcons
-              name={`${repeatIcon()}`}
-              size={30}
-              color={repeatMode !== 'off' ? '#FFD369' : '#888888'}
-            />
-          </TouchableOpacity>
+              <TouchableOpacity onPress={() => {}}>
+                <Ionicons name="share-outline" size={30} color="#888888" />
+              </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => {}}>
-            <Ionicons name="share-outline" size={30} color="#888888" />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => navigation.navigate('MenuScreen')}>
-            <Ionicons name="menu" size={30} color="#888888" />
-          </TouchableOpacity>
-        </View>
-      </View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('MenuScreen')}>
+                <Ionicons name="menu" size={30} color="#888888" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </>
+      )}
     </SafeAreaView>
   );
 };

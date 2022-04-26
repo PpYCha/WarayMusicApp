@@ -8,6 +8,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
+  TextInput,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/core';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -48,7 +49,7 @@ const Login = () => {
   return (
     <NativeBaseProvider>
       <ScrollView
-        style={{flex: 1, backgroundColor: '#ffffff'}}
+        style={{flex: 1, backgroundColor: '#f0f2f5'}}
         showsVerticalScrollIndicator={false}>
         <ImageBackground
           source={require('../assets/img/backgroundLogin.jpg')}
@@ -63,71 +64,41 @@ const Login = () => {
             <Text style={styles.brandViewText}>Waray Music Player</Text>
           </View>
         </ImageBackground>
-        {/* Bottom View */}
+
         <View style={styles.bottomView}>
-          <View style={{padding: 40}}>
-            <Text style={{color: '#4633A1', fontSize: 34}}>Welcome</Text>
-            <Text>
-              Don't have an account?
-              <TouchableOpacity
-                style={{paddingTop: 7}}
-                onPress={() => {
-                  navigation.replace('RegisterScreen');
-                }}>
-                <Text style={{color: 'red', fontStyle: 'italic'}}>
-                  Register now
-                </Text>
-              </TouchableOpacity>
-            </Text>
-            <View style={{marginTop: 25}}>
-              {/* Bottom View */}
-              <View>
-                <Stack space={4} w="100%" alignItems="center">
-                  <Input
-                    w={{
-                      base: '100%',
-                    }}
-                    InputLeftElement={
-                      <Icon
-                        as={<MaterialIcons name="person" />}
-                        size={5}
-                        ml="2"
-                        color="muted.400"
-                      />
-                    }
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={text => setEmail(text)}
-                  />
-                  <Input
-                    w={{
-                      base: '100%',
-                      md: '25%',
-                    }}
-                    InputRightElement={
-                      <Icon
-                        as={<MaterialIcons name="visibility-off" />}
-                        size={5}
-                        mr="2"
-                        color="muted.400"
-                      />
-                    }
-                    placeholder="Password"
-                    value={password}
-                    onChangeText={text => setPassword(text)}
-                    secureTextEntry
-                  />
-                </Stack>
-                <View>
-                  {/* Buttons  */}
-                  <View>
-                    <CustomButton text={'SIGN IN'} onPress={handleLogin} />
-                  </View>
-                </View>
-              </View>
+          <Text style={{color: 'black', fontSize: 34}}>Welcome</Text>
+
+          <View>
+            <View>
+              <TextInput
+                placeholder="Email"
+                style={styles.input}
+                onChangeText={text => setEmail(text)}
+                value={email}
+              />
+              <TextInput
+                placeholder="Password"
+                style={styles.input}
+                onChangeText={text => setPassword(text)}
+                value={password}
+                secureTextEntry
+              />
             </View>
-            <View></View>
+
+            <CustomButton
+              backgroundColor="#1877f2"
+              text={'Login'}
+              onPress={handleLogin}
+            />
           </View>
+
+          <TouchableOpacity
+            style={{marginTop: 10}}
+            onPress={() => {
+              navigation.replace('RegisterScreen');
+            }}>
+            <Text>Create New Account</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </NativeBaseProvider>
@@ -142,6 +113,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  input: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    marginBottom: 15,
+    padding: 10,
+  },
   brandViewText: {
     color: '#e5e5e5',
     fontSize: 40,
@@ -150,17 +127,12 @@ const styles = StyleSheet.create({
   },
   bottomView: {
     flex: 1.5,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f0f2f5',
     bottom: 50,
     borderTopStartRadius: 60,
     borderTopEndRadius: 60,
-  },
-  textInput: {
-    alignSelf: 'stretch',
-
-    borderBottomColor: '#000',
-
-    borderBottomColor: '#000', // Add this to specify bottom border color
-    borderBottomWidth: 2, // Add this to specify bottom border thickness
+    paddingTop: 40,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 });

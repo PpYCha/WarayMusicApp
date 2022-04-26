@@ -7,16 +7,17 @@ import {
 } from 'react-native';
 import React from 'react';
 
-const MultiInput = ({labelValue, placeholder, ...props}) => {
+const MultiInput = ({value, placeholder, onChangeText, ...rest}) => {
   return (
     <>
       <TextInput
-        value={labelValue}
+        value={value}
         multiline
-        numberOfLines={6}
+        numberOfLines={10}
         placeholder={placeholder}
-        maxLength={300}
+        maxLength={400}
         style={styles.multiInput}
+        onChangeText={onChangeText}
       />
     </>
   );
@@ -26,9 +27,11 @@ export default MultiInput;
 
 const styles = StyleSheet.create({
   multiInput: {
-    borderWidth: 1,
-    margin: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    marginBottom: 15,
+    padding: 10,
+    textAlignVertical: 'top',
+    textAlign: 'center',
   },
 });
