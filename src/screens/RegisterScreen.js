@@ -159,7 +159,7 @@ const Register = () => {
                 style={styles.pickerStyle}
                 selectedValue={userType}
                 onValueChange={itemValue => setUserType(itemValue)}>
-                <Picker.Item label="Please select an option.." value="0" />
+                <Picker.Item label="Please select an option.." value="admin" />
 
                 <Picker.Item label="Listener" value="Listener" />
                 <Picker.Item label="Composer" value="Composer" />

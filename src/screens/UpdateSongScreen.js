@@ -17,6 +17,8 @@ import {firebase} from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import CustomButton from '../components/CustomButton';
 import RNFetchBlob from 'rn-fetch-blob';
+import CheckBox from '@react-native-community/checkbox';
+import {useIsFocused} from '@react-navigation/native';
 
 // import ImagePicker from 'react-native-image-picker';
 
@@ -30,7 +32,7 @@ const UselessTextInput = props => {
   );
 };
 
-const AddEditSongScreen = () => {
+const UpdateSongScreen = ({route}) => {
   const [songDetails, setSongDetails] = useState(null);
   const [songTitle, setSongTitle] = useState('');
   const [artistName, setArtistName] = useState('');
@@ -40,13 +42,41 @@ const AddEditSongScreen = () => {
   const [uploading, setUploading] = useState(false);
   const [fileResponse, setFileResponse] = useState();
   const [user, setUser] = useState([]);
+  const [firebaseUrl, setFirebaseUrl] = useState();
+  const [verfiedSongStatus, setVerfiedSongStatus] = useState(false);
+  const [songId, setSongId] = useState();
+  const [songUserId, setSongUserId] = useState();
+  const [songKey, setSongKey] = useState();
+  const isFocused = useIsFocused();
 
   const [transferred, setTransferred] = useState(0);
   const [totalTransferred, setTotalTransferred] = useState();
+  const isTrueSet = setVerfiedSongStatus === 'true';
+  const {
+    artist,
+    description,
+    id,
+    lyrics,
+    title,
+    url,
+    userId,
+    verifiedSOng,
+    key,
+  } = route.params;
 
   useEffect(() => {
     getUser();
-  }, []);
+    setArtistName(artist);
+    setSongDesc(description);
+    setSongLyrics(lyrics);
+    setSongTitle(title);
+    setSongId(id);
+    setFirebaseUrl(url);
+    setSongUserId(userId);
+    setSongKey(key);
+
+    // setVerfiedSongStatus(verifiedSOng);
+  }, [isFocused]);
 
   const getUser = () => {
     const reference = firebase
@@ -85,40 +115,33 @@ const AddEditSongScreen = () => {
   };
 
   const handleSaveSong = async () => {
-    if (fileResponse != null) {
-      const songUrl = await uploadSong();
+    // if (fileResponse != null) {
+    //   const songUrl = await uploadSong();
 
-      // title: 'Uswag Pambujan',
-      // artist: 'Pambujanon',
-      // artwork: require('../assets/img/defaultImg.png'),
-      // url: 'https://firebasestorage.googleapis.com/v0/b/waraymusicapp.appspot.com/o/Music%2FCHA-LA%20HEAD%20CHA-LA%20-%20Dragonball%20Z%20(Opening%20Theme)%20%5BOST%20Full%5D.mp3?alt=media&token=757fda92-ac60-486f-952f-1cf66c2db612',
-      // description: '',
-
-      const reference = firebase
-        .app()
-        .database(
-          'https://waraymusicapp-default-rtdb.asia-southeast1.firebasedatabase.app/',
-        )
-        .ref('/songs/')
-        .push()
-        .set({
-          title: songTitle,
-          artist: artistName,
-          lyrics: songLyrics,
-          description: songDesc,
-          url: songUrl,
-          userId: `${auth().currentUser.uid}`,
-          id: Date.now(),
-          verifiedSOng: 'false',
-        });
-      Alert.alert('Success', 'Added song Successfully');
-      setArtistName('');
-      setSongTitle('');
-      setSongLyrics('');
-      setSongDesc('');
-    } else {
-      Alert.alert('Fail to Save', 'Add song first');
-    }
+    const reference = firebase
+      .app()
+      .database(
+        'https://waraymusicapp-default-rtdb.asia-southeast1.firebasedatabase.app/',
+      )
+      .ref(`/songs/${songKey}`)
+      .update({
+        title: songTitle,
+        artist: artistName,
+        lyrics: songLyrics,
+        description: songDesc,
+        url: firebaseUrl,
+        userId: userId,
+        id: songId,
+        verifiedSOng: verfiedSongStatus,
+      });
+    Alert.alert('Success', 'Save song Successfully');
+    setArtistName('');
+    setSongTitle('');
+    setSongLyrics('');
+    setSongDesc('');
+    // } else {
+    //   Alert.alert('Fail to Save', 'Add song first');
+    // }
   };
 
   const getPathForFirebaseStorage = async uri => {
@@ -195,7 +218,20 @@ const AddEditSongScreen = () => {
           placeholder="Song Description"
           onChangeText={text => setSongDesc(text)}
         />
-        <CustomButton
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <CheckBox
+            disabled={false}
+            value={verfiedSongStatus}
+            onValueChange={newValue => setVerfiedSongStatus(newValue)}
+          />
+          <Text>Check if Song Verified</Text>
+        </View>
+        {/* <CustomButton
           button_type={'Secondary'}
           text={'Choose Song'}
           backgroundColor="gray"
@@ -208,7 +244,7 @@ const AddEditSongScreen = () => {
           text={'Choose Image'}
           backgroundColor="gray"
           onPress={() => {}}
-        />
+        /> */}
 
         {uploading === true ? (
           <>
@@ -231,7 +267,7 @@ const AddEditSongScreen = () => {
   );
 };
 
-export default AddEditSongScreen;
+export default UpdateSongScreen;
 
 const styles = StyleSheet.create({
   container: {

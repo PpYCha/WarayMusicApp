@@ -37,6 +37,7 @@ import database from '@react-native-firebase/database';
 const {width, height} = Dimensions.get('window');
 
 const setupPlayer = async songList => {
+  TrackPlayer.destroy();
   try {
     await TrackPlayer.setupPlayer();
     await TrackPlayer.updateOptions({
@@ -139,9 +140,13 @@ const MusicPlayerScreen = () => {
         snapshot.forEach(childSnapshot => {
           let item = childSnapshot.val();
           item.key = childSnapshot.key;
+
           returnArr.push(item);
         });
-        setSongList(returnArr);
+
+        let newArray = returnArr.filter(item => item.verifiedSOng === true);
+        setSongList(newArray);
+        console.log('', newArray);
       });
     setSample('Sampleine');
 
@@ -326,7 +331,19 @@ const MusicPlayerScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => {}}>
-                <Ionicons name="share-outline" size={30} color="#888888" />
+                <Ionicons name="download" size={30} color="#888888" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  // navigation.navigate('SongLyricsScreen', {})
+                  console.log('line 340:', trackTitle);
+                }}>
+                <MaterialCommunityIcons
+                  name="music-circle-outline"
+                  size={30}
+                  color="#888888"
+                />
               </TouchableOpacity>
 
               <TouchableOpacity

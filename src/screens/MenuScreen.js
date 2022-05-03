@@ -13,6 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import {firebase} from '@react-native-firebase/database';
 import {AuthContext} from '../context/AuthContext';
+import {useIsFocused} from '@react-navigation/native';
 
 const Item = ({item, onPress, backgroundColor, textColor}) => (
   <TouchableOpacity onPress={onPress} style={styles.itemList}>
@@ -24,13 +25,15 @@ const MenuScreen = () => {
   const [selectedId, setSelectedId] = useState(null);
   const navigation = useNavigation();
   const [user, setUser] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     getUser();
-  }, []);
+  }, [isFocused]);
 
-  const getUser = () => {
-    const reference = firebase
+  const getUser = async () => {
+    await firebase
       .app()
       .database(
         'https://waraymusicapp-default-rtdb.asia-southeast1.firebasedatabase.app/',
@@ -39,6 +42,10 @@ const MenuScreen = () => {
       .on('value', snapshot => {
         setUser(snapshot.val());
       });
+
+    if (isLoading) {
+      setIsLoading(false);
+    }
 
     console.log('user image:', user.image_url);
   };

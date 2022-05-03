@@ -12,6 +12,8 @@ import {AuthContext} from './AuthProvider';
 import EdtProfileScreen from './src/screens/EdtProfileScreen';
 import VerificationScreen from './src/screens/VerificationScreen';
 import VerifiedScreen from './src/screens/VerifiedScreen';
+import UpdateSongScreen from './src/screens/UpdateSongScreen';
+import SongLyricsScreen from './src/screens/SongLyricsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,6 +59,16 @@ const App = () => {
         <Stack.Screen
           name="Verified song and artist"
           component={VerifiedScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="UpdateSongScreen"
+          component={UpdateSongScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="SongLyricsScreen"
+          component={SongLyricsScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
