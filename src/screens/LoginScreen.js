@@ -11,6 +11,7 @@ import {
 
 import auth from '@react-native-firebase/auth';
 import SocialSignInButtons from '../components/SocialSignInButtons';
+import CustomInput from '../components/CustomInput';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -50,17 +51,17 @@ const LoginScreen = () => {
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.inputContainer}>
-        <TextInput
+        <CustomInput
           placeholder="Email"
           value={email}
           onChangeText={text => setEmail(text)}
-          style={styles.input}
+          // style={styles.input}
         />
-        <TextInput
+        <CustomInput
           placeholder="Password"
           value={password}
           onChangeText={text => setPassword(text)}
-          style={styles.input}
+          // style={styles.input}
           secureTextEntry
         />
       </View>

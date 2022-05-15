@@ -17,6 +17,7 @@ import {firebase} from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 import CustomButton from '../components/CustomButton';
 import RNFetchBlob from 'rn-fetch-blob';
+import ImagePicker from 'react-native-image-crop-picker';
 
 // import ImagePicker from 'react-native-image-picker';
 
@@ -48,11 +49,11 @@ const AddEditSongScreen = () => {
     getUser();
   }, []);
 
-  const getUser = () => {
-    const reference = firebase
+  const getUser = async () => {
+    await firebase
       .app()
       .database(
-        'https://waraymusicapp-default-rtdb.asia-southeast1.firebasedatabase.app/',
+        'https://waraymusicapp-18865-default-rtdb.asia-southeast1.firebasedatabase.app/',
       )
       .ref(`/users/${auth().currentUser.uid}`)
       .on('value', snapshot => {
@@ -85,6 +86,7 @@ const AddEditSongScreen = () => {
   };
 
   const handleSaveSong = async () => {
+    const imageUrl = await uploadImage();
     if (fileResponse != null) {
       const songUrl = await uploadSong();
 
@@ -97,7 +99,7 @@ const AddEditSongScreen = () => {
       const reference = firebase
         .app()
         .database(
-          'https://waraymusicapp-default-rtdb.asia-southeast1.firebasedatabase.app/',
+          'https://waraymusicapp-18865-default-rtdb.asia-southeast1.firebasedatabase.app/',
         )
         .ref('/songs/')
         .push()
@@ -110,6 +112,7 @@ const AddEditSongScreen = () => {
           userId: `${auth().currentUser.uid}`,
           id: Date.now(),
           verifiedSOng: 'false',
+          artwork: imageUrl,
         });
       Alert.alert('Success', 'Added song Successfully');
       setArtistName('');
@@ -171,6 +174,65 @@ const AddEditSongScreen = () => {
     }
   };
 
+  const choosePhotoFromLibrary = () => {
+    ImagePicker.openPicker({
+      width: 1200,
+      height: 780,
+      cropping: true,
+    }).then(image => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUri);
+    });
+  };
+
+  const uploadImage = async () => {
+    if (image == null) {
+      return null;
+    }
+    const uploadUri = image;
+    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+    // Add timestamp to File Name
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+
+    true;
+    setTransferred(0);
+    setUploading;
+
+    const storageRef = storage().ref(`photos/song_image/${filename}`);
+    const task = storageRef.putFile(uploadUri);
+
+    task.on('state_changed', taskSnapshot => {
+      console.log(
+        `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
+      );
+
+      setTransferred(
+        Math.round(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) *
+          100,
+      );
+    });
+
+    try {
+      await task;
+
+      const url = storageRef.getDownloadURL();
+
+      setUploading(false);
+      setImage(null);
+
+      return url;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+
+    setImage(null);
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -207,7 +269,7 @@ const AddEditSongScreen = () => {
           button_type={'Secondary'}
           text={'Choose Image'}
           backgroundColor="gray"
-          onPress={() => {}}
+          onPress={() => choosePhotoFromLibrary()}
         />
 
         {uploading === true ? (
@@ -218,13 +280,15 @@ const AddEditSongScreen = () => {
             </View>
           </>
         ) : (
-          <CustomButton
-            text={'Save Song'}
-            backgroundColor="#42b72a"
-            onPress={() => {
-              handleSaveSong();
-            }}
-          />
+          <>
+            <CustomButton
+              text={'Save Song'}
+              backgroundColor="#42b72a"
+              onPress={() => {
+                handleSaveSong();
+              }}
+            />
+          </>
         )}
       </View>
     </ScrollView>

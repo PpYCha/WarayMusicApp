@@ -14,6 +14,8 @@ import VerificationScreen from './src/screens/VerificationScreen';
 import VerifiedScreen from './src/screens/VerifiedScreen';
 import UpdateSongScreen from './src/screens/UpdateSongScreen';
 import SongLyricsScreen from './src/screens/SongLyricsScreen';
+import SongListScreen from './src/screens/SongListScreen';
+import ViewSongSceen from './src/screens/ViewSongSceen';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,13 +25,13 @@ const App = () => {
       <Stack.Navigator>
         <Stack.Screen
           options={{headerShown: false}}
-          name="Login"
-          component={Login}
+          name="MusicPlayerScreen"
+          component={MusicPlayerScreen}
         />
         <Stack.Screen
           options={{headerShown: false}}
-          name="MusicPlayerScreen"
-          component={MusicPlayerScreen}
+          name="Login"
+          component={Login}
         />
         <Stack.Screen
           options={{headerShown: false}}
@@ -69,6 +71,18 @@ const App = () => {
         <Stack.Screen
           name="SongLyricsScreen"
           component={SongLyricsScreen}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="Songs"
+          component={SongListScreen}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="ViewSongSceen"
+          component={ViewSongSceen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     padding: 13,
     borderColor: '#fff',
     borderWidth: 0,
-    borderRadius: 10,
+    borderRadius: 20,
   },
   text: {
     fontSize: 20,

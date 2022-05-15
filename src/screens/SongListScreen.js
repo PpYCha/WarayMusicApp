@@ -7,7 +7,7 @@ import CustomButton from '../components/CustomButton';
 import {useIsFocused} from '@react-navigation/native';
 import {background} from 'native-base/lib/typescript/theme/styled-system';
 
-const VerificationScreen = ({navigation}) => {
+const SongListScreen = ({navigation}) => {
   const [songList, setSongList] = useState();
   const [loading, setLoading] = useState(true);
   const isFocused = useIsFocused();
@@ -51,7 +51,7 @@ const VerificationScreen = ({navigation}) => {
       <TouchableOpacity
         style={[styles.item, {backgroundColor: backgroundColor}]}
         onPress={() => {
-          navigation.navigate('UpdateSongScreen', {
+          navigation.navigate('ViewSongSceen', {
             artist: item.artist,
             description: item.description,
             id: item.id,
@@ -75,28 +75,11 @@ const VerificationScreen = ({navigation}) => {
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
-      <View
-        style={{
-          flex: 1,
-          alignContent: 'flex-end',
-          alignItems: 'flex-end',
-          flexDirection: 'row-reverse',
-          margin: 10,
-          padding: 10,
-        }}>
-        <CustomButton
-          text={'Save Song'}
-          backgroundColor="#42b72a"
-          onPress={() => {
-            handleSaveSong();
-          }}
-        />
-      </View>
     </View>
   );
 };
 
-export default VerificationScreen;
+export default SongListScreen;
 
 const styles = StyleSheet.create({
   container: {flex: 1},

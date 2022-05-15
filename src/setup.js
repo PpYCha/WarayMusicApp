@@ -6,7 +6,7 @@ import auth from '@react-native-firebase/auth';
 const firebaseConfig = {
   apiKey: 'AIzaSyCTRVxnVxkv-TzzcRPdew1uzeBufPhm91w',
   databaseURL:
-    'https://waray-music-app-default-rtdb.asia-southeast1.firebasedatabase.app',
+    'https://waraymusicapp-18865-default-rtdb.asia-southeast1.firebasedatabase.app/',
   projectId: 'waray-music-app',
   storageBucket: 'waray-music-app.appspot.com',
   messagingSenderId: '',

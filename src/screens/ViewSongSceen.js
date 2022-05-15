@@ -32,7 +32,7 @@ const UselessTextInput = props => {
   );
 };
 
-const UpdateSongScreen = ({route, navigation}) => {
+const ViewSongSceen = ({route, navigation}) => {
   const [songDetails, setSongDetails] = useState(null);
   const [songTitle, setSongTitle] = useState('');
   const [artistName, setArtistName] = useState('');
@@ -194,21 +194,6 @@ const UpdateSongScreen = ({route, navigation}) => {
     }
   };
 
-  const handleDelete = async () => {
-    await firebase
-      .app()
-      .database(
-        'https://waraymusicapp-18865-default-rtdb.asia-southeast1.firebasedatabase.app/',
-      )
-      .ref(`/songs/${songKey}`)
-      .remove()
-      .then(() => {
-        Alert.alert('Song deleted!', '');
-
-        navigation.navigate('MenuScreen');
-      });
-  };
-
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -233,7 +218,7 @@ const UpdateSongScreen = ({route, navigation}) => {
           placeholder="Song Description"
           onChangeText={text => setSongDesc(text)}
         />
-        <View
+        {/* <View
           style={{
             flexDirection: 'row',
             justifyContent: 'center',
@@ -245,7 +230,7 @@ const UpdateSongScreen = ({route, navigation}) => {
             onValueChange={newValue => setVerfiedSongStatus(newValue)}
           />
           <Text>Check if Song Verified</Text>
-        </View>
+        </View> */}
         {/* <CustomButton
           button_type={'Secondary'}
           text={'Choose Song'}
@@ -261,7 +246,7 @@ const UpdateSongScreen = ({route, navigation}) => {
           onPress={() => {}}
         /> */}
 
-        {uploading === true ? (
+        {/* {uploading === true ? (
           <>
             <View style={{alignContent: 'center'}}>
               <ActivityIndicator size="large" />
@@ -269,30 +254,20 @@ const UpdateSongScreen = ({route, navigation}) => {
             </View>
           </>
         ) : (
-          <>
-            <CustomButton
-              text={'Save Song'}
-              backgroundColor="#42b72a"
-              onPress={() => {
-                handleSaveSong();
-              }}
-            />
-            <View style={{margin: 5}}></View>
-            <CustomButton
-              text={'Delete Song'}
-              backgroundColor="#FFA8A8"
-              onPress={() => {
-                handleDelete();
-              }}
-            />
-          </>
-        )}
+          <CustomButton
+            text={'Save Song'}
+            backgroundColor="#42b72a"
+            onPress={() => {
+              handleSaveSong();
+            }}
+          />
+        )} */}
       </View>
     </ScrollView>
   );
 };
 
-export default UpdateSongScreen;
+export default ViewSongSceen;
 
 const styles = StyleSheet.create({
   container: {

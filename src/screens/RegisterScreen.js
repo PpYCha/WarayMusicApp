@@ -31,7 +31,7 @@ const Register = () => {
   const [name, setName] = useState('');
   const [image, setImage] = useState(null);
   const [open, setOpen] = useState(false);
-  const [userType, setUserType] = useState();
+  const [userType, setUserType] = useState('admin');
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
 
@@ -49,7 +49,7 @@ const Register = () => {
           const reference = firebase
             .app()
             .database(
-              'https://waraymusicapp-default-rtdb.asia-southeast1.firebasedatabase.app/',
+              'https://waraymusicapp-18865-default-rtdb.asia-southeast1.firebasedatabase.app/',
             )
             .ref(`/users/${uid}`)
             .set({
@@ -58,6 +58,7 @@ const Register = () => {
               name: name,
               user_type: userType,
               image_url: imageUrl,
+              number: number,
             });
 
           Alert.alert('Success', 'Registered Successfully');
@@ -160,7 +161,6 @@ const Register = () => {
                 selectedValue={userType}
                 onValueChange={itemValue => setUserType(itemValue)}>
                 <Picker.Item label="Please select an option.." value="admin" />
-
                 <Picker.Item label="Listener" value="Listener" />
                 <Picker.Item label="Composer" value="Composer" />
               </Picker>
@@ -177,7 +177,11 @@ const Register = () => {
             <Image style={styles.image} source={{uri: image}} />
           ) : (
             <Image
-              style={{width: '100%', height: 150}}
+              style={{
+                width: '100%',
+                height: 140,
+                borderRadius: 75,
+              }}
               source={require('../assets/img/avatar-default.png')}
               resizeMode="contain"
             />
@@ -239,7 +243,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   image: {
-    height: 150,
+    height: 140,
     width: '100%',
 
     flex: 1,

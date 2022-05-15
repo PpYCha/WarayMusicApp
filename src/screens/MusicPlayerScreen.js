@@ -32,7 +32,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {useNavigation} from '@react-navigation/native';
 import songs from '../model/data';
 import {firebase} from '@react-native-firebase/database';
+import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
+import RNFetchBlob from 'rn-fetch-blob';
+import {FirebaseStorageTypes} from '@react-native-firebase/storage';
+import {useIsFocused} from '@react-navigation/native';
+import UrlButton from '../components/UrlButton';
+import auth from '@react-native-firebase/auth';
+import SplashScreen from './SplashScreen';
 
 const {width, height} = Dimensions.get('window');
 
@@ -57,7 +64,7 @@ const setupPlayer = async songList => {
 
 const togglePlayBack = async playBackState => {
   const currentTrack = await TrackPlayer.getCurrentTrack();
-  console.log(currentTrack, playBackState, State.Playing);
+  console.log('Line 60:', currentTrack, playBackState, State.Playing);
   if (currentTrack != null) {
     if (playBackState == State.Paused) {
       await TrackPlayer.play();
@@ -69,7 +76,7 @@ const togglePlayBack = async playBackState => {
   }
 };
 
-const MusicPlayerScreen = () => {
+const MusicPlayerScreen = ({seconds}) => {
   const playBackState = usePlaybackState();
   const progress = useProgress();
   const navigation = useNavigation();
@@ -82,6 +89,13 @@ const MusicPlayerScreen = () => {
   const [trackArtwork, setTrackArtwork] = useState();
   const [loading, setLoading] = useState(true);
   const [sample, setSample] = useState(false);
+  const [trackLyrics, setTrackLyrics] = useState();
+  const [trackUrl, setTrackUrl] = useState();
+  const isFocused = useIsFocused();
+  const [user, setUser] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(seconds);
+
   // custom referecnces
   const scrollX = useRef(new Animated.Value(0)).current;
   const songSlider = useRef(null);
@@ -90,10 +104,12 @@ const MusicPlayerScreen = () => {
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
     if (event.type === Event.PlaybackTrackChanged && event.nextTrack !== null) {
       const track = await TrackPlayer.getTrack(event.nextTrack);
-      const {title, artwork, artist} = track;
+      const {title, artwork, artist, lyrics, url} = track;
       setTrackTitle(title);
       setTrackArtist(artist);
       setTrackArtwork(artwork);
+      setTrackLyrics(lyrics);
+      setTrackUrl(url);
     }
   });
 
@@ -134,7 +150,11 @@ const MusicPlayerScreen = () => {
 
   const fetchSongs = async () => {
     let returnArr = [];
-    await database()
+    await firebase
+      .app()
+      .database(
+        'https://waraymusicapp-18865-default-rtdb.asia-southeast1.firebasedatabase.app/',
+      )
       .ref('/songs')
       .on('value', snapshot => {
         snapshot.forEach(childSnapshot => {
@@ -146,13 +166,9 @@ const MusicPlayerScreen = () => {
 
         let newArray = returnArr.filter(item => item.verifiedSOng === true);
         setSongList(newArray);
-        console.log('', newArray);
+        // console.log('Line 149: ', newArray);
       });
     setSample('Sampleine');
-
-    if (loading) {
-      setLoading(false);
-    }
 
     console.log('List of songs', songList);
   };
@@ -180,8 +196,30 @@ const MusicPlayerScreen = () => {
   };
 
   useEffect(() => {
-    fetchSongs();
-  }, []);
+    setTimeout(() => {
+      fetchSongs();
+      getUser();
+      setLoading(false);
+    }, 2000);
+  }, [isFocused]);
+
+  const getUser = async () => {
+    await firebase
+      .app()
+      .database(
+        'https://waraymusicapp-18865-default-rtdb.asia-southeast1.firebasedatabase.app/',
+      )
+      .ref(`/users/${auth().currentUser.uid}`)
+      .on('value', snapshot => {
+        setUser(snapshot.val());
+      });
+
+    if (isLoading) {
+      setIsLoading(false);
+    }
+
+    console.log('user image:', user.image_url);
+  };
 
   const skipToNext = () => {
     songSlider.current.scrollToOffset({
@@ -196,12 +234,13 @@ const MusicPlayerScreen = () => {
   };
 
   const renderSongs = ({item, index}) => {
+    // console.log('line 199: ', item.key);
     return (
       <Animated.View style={style.mainWrapper}>
         <View style={[style.imageWrapper, style.elevation]}>
           <Image
             //   source={item.artwork}
-            source={trackArtwork}
+            source={{uri: trackArtwork}}
             style={style.musicImage}
           />
         </View>
@@ -212,9 +251,7 @@ const MusicPlayerScreen = () => {
   return (
     <SafeAreaView style={style.container}>
       {loading ? (
-        <View>
-          <Text>Hello</Text>
-        </View>
+        <SplashScreen />
       ) : (
         <>
           {/* music player section */}
@@ -225,7 +262,7 @@ const MusicPlayerScreen = () => {
               ref={songSlider}
               renderItem={renderSongs}
               data={songList}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item.key}
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
@@ -319,9 +356,8 @@ const MusicPlayerScreen = () => {
                 onPress={() => {
                   loadTrack();
                 }}>
-                <Ionicons name="heart-outline" size={30} color="#888888" />
+                <Ionicons name="refresh" size={30} color="#888888" />
               </TouchableOpacity>
-
               <TouchableOpacity onPress={changeRepeatMode}>
                 <MaterialCommunityIcons
                   name={`${repeatIcon()}`}
@@ -329,15 +365,20 @@ const MusicPlayerScreen = () => {
                   color={repeatMode !== 'off' ? '#FFD369' : '#888888'}
                 />
               </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => {}}>
-                <Ionicons name="download" size={30} color="#888888" />
-              </TouchableOpacity>
+              {typeof user.user_type === 'undefined' ? (
+                <></>
+              ) : (
+                <UrlButton url={trackUrl} />
+              )}
 
               <TouchableOpacity
                 onPress={() => {
-                  // navigation.navigate('SongLyricsScreen', {})
-                  console.log('line 340:', trackTitle);
+                  navigation.navigate('SongLyricsScreen', {
+                    lyrics: trackLyrics,
+                    artist: trackArtist,
+                    title: trackTitle,
+                  });
+                  // console.log('line 340:', trackLyrics);
                 }}>
                 <MaterialCommunityIcons
                   name="music-circle-outline"
@@ -345,11 +386,20 @@ const MusicPlayerScreen = () => {
                   color="#888888"
                 />
               </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => navigation.navigate('MenuScreen')}>
-                <Ionicons name="menu" size={30} color="#888888" />
-              </TouchableOpacity>
+              {typeof user.user_type === 'undefined' ? (
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                  <MaterialCommunityIcons
+                    name="login"
+                    size={30}
+                    color="#888888"
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('MenuScreen')}>
+                  <Ionicons name="menu" size={30} color="#888888" />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </>

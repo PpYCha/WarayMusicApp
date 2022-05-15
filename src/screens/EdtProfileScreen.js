@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import {AuthContext} from '../context/AuthContext';
 import CustomInput from '../components/CustomInput';
@@ -6,32 +6,37 @@ import CustomButton from '../components/CustomButton';
 
 const EdtProfileScreen = () => {
   const [user, setUser] = useState([]);
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [fullname, setFullname] = useState();
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-        {typeof user.image_url === 'undefined' ? (
-          <Image
-            style={styles.imageAvatar}
-            source={require('../assets/img/avatar-default.png')}
-          />
-        ) : (
-          <Image style={styles.imageAvatar} source={{uri: user.image_url}} />
-        )}
+        <TouchableOpacity>
+          {typeof user.image_url === 'undefined' ? (
+            <Image
+              style={styles.imageAvatar}
+              source={require('../assets/img/avatar-default.png')}
+            />
+          ) : (
+            <Image style={styles.imageAvatar} source={{uri: user.image_url}} />
+          )}
+        </TouchableOpacity>
       </View>
       <View style={{flex: 1}}>
         <CustomInput
           placeholder="Email"
-          onChangeText={text => setName(text)}
+          onChangeText={text => setEmail(text)}
           // value={name}
         />
         <CustomInput
           placeholder="Password"
-          onChangeText={text => setName(text)}
+          onChangeText={text => setPassword(text)}
           // value={name}
         />
         <CustomInput
           placeholder="Fullname"
-          onChangeText={text => setName(text)}
+          onChangeText={text => setFullname(text)}
           // value={name}
         />
         <CustomButton
@@ -57,8 +62,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageAvatar: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
     borderRadius: 100,
   },
 });

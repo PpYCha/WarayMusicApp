@@ -12,6 +12,7 @@ import React, {useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import {firebase} from '@react-native-firebase/database';
+import storage from '@react-native-firebase/storage';
 import {AuthContext} from '../context/AuthContext';
 import {useIsFocused} from '@react-navigation/native';
 
@@ -36,7 +37,7 @@ const MenuScreen = () => {
     await firebase
       .app()
       .database(
-        'https://waraymusicapp-default-rtdb.asia-southeast1.firebasedatabase.app/',
+        'https://waraymusicapp-18865-default-rtdb.asia-southeast1.firebasedatabase.app/',
       )
       .ref(`/users/${auth().currentUser.uid}`)
       .on('value', snapshot => {
@@ -114,10 +115,7 @@ const menuListAdmin = [
     id: 1,
     title: 'Edit Profile',
   },
-  {
-    id: 2,
-    title: 'Download',
-  },
+
   {
     id: 3,
     title: 'Upload',
@@ -126,10 +124,10 @@ const menuListAdmin = [
     id: 4,
     title: 'Verification',
   },
-  {
-    id: 5,
-    title: 'Verified song and artist',
-  },
+  // {
+  //   id: 5,
+  //   title: 'Verified song and artist',
+  // },
   {
     id: 6,
     title: 'Log-out',
@@ -141,18 +139,7 @@ const menuListListener = [
     id: 1,
     title: 'Edit Profile',
   },
-  {
-    id: 2,
-    title: 'Playlist',
-  },
-  {
-    id: 3,
-    title: 'Favorites',
-  },
-  {
-    id: 4,
-    title: 'Download',
-  },
+
   {
     id: 6,
     title: 'Log-out',
@@ -164,10 +151,7 @@ const menuListComposer = [
     id: 1,
     title: 'Edit Profile',
   },
-  {
-    id: 2,
-    title: 'Playlist',
-  },
+
   {
     id: 3,
     title: 'Songs',
@@ -176,10 +160,7 @@ const menuListComposer = [
     id: 4,
     title: 'Upload',
   },
-  {
-    id: 5,
-    title: 'Download',
-  },
+
   {
     id: 6,
     title: 'Log-out',
@@ -217,5 +198,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     justifyContent: 'center',
     alignItems: 'center',
+    color: 'black',
   },
 });

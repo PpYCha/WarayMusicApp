@@ -10,12 +10,13 @@ import React from 'react';
 const MultiInput = ({value, placeholder, onChangeText, ...rest}) => {
   return (
     <>
+      <Text style={{color: 'black'}}>{placeholder}</Text>
       <TextInput
         value={value}
         multiline
         numberOfLines={10}
         placeholder={placeholder}
-        maxLength={400}
+        maxLength={5000}
         style={styles.multiInput}
         onChangeText={onChangeText}
       />
@@ -33,5 +34,6 @@ const styles = StyleSheet.create({
     padding: 10,
     textAlignVertical: 'top',
     textAlign: 'center',
+    color: 'black',
   },
 });
