@@ -58,7 +58,6 @@ const Register = () => {
               name: name,
               user_type: userType,
               image_url: imageUrl,
-              number: number,
             });
 
           Alert.alert('Success', 'Registered Successfully');
