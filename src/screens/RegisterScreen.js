@@ -34,6 +34,9 @@ const Register = () => {
   const [userType, setUserType] = useState('admin');
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
+  const [address, setAddress] = useState('');
+  const [sex, setSex] = useState('');
+  const [age, setAge] = useState('');
 
   const handleSignUp = async () => {
     const imageUrl = await uploadImage();
@@ -58,6 +61,9 @@ const Register = () => {
               name: name,
               user_type: userType,
               image_url: imageUrl,
+              address: address,
+              age: age,
+              sex: sex,
             });
 
           Alert.alert('Success', 'Registered Successfully');
@@ -154,6 +160,30 @@ const Register = () => {
               value={name}
             />
 
+            <CustomInput
+              placeholder="Address"
+              onChangeText={text => setAddress(text)}
+              value={address}
+            />
+
+            <CustomInput
+              placeholder="Age"
+              onChangeText={text => setAge(text)}
+              value={age}
+            />
+
+            <CustomInput
+              placeholder="Sex"
+              onChangeText={text => setSex(text)}
+              value={sex}
+            />
+
+            <CustomInput
+              placeholder="Contact Number"
+              onChangeText={text => setName(text)}
+              value={name}
+            />
+
             <View style={styles.pickerContainer}>
               <Picker
                 style={styles.pickerStyle}
@@ -210,13 +240,14 @@ export default Register;
 const styles = StyleSheet.create({
   mainView: {
     flex: 1,
-    backgroundColor: '#f0f2f5',
+    backgroundColor: '#EDF8ED',
     padding: 10,
   },
 
   container: {
     alignContent: 'center',
     flex: 1,
+    backgroundColor: '#EDF8ED',
   },
 
   headerText: {

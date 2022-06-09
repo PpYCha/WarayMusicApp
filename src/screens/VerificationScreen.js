@@ -99,7 +99,9 @@ const VerificationScreen = ({navigation}) => {
 export default VerificationScreen;
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
+  container: {flex: 1,
+ // color:'#000'
+},
   item: {
     padding: 5,
     marginVertical: 3,

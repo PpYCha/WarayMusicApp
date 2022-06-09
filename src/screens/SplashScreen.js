@@ -1,5 +1,6 @@
-import {StyleSheet, Text, View, ImageBackground} from 'react-native';
+import {StyleSheet, Text, View, ImageBackground, Button} from 'react-native';
 import React from 'react';
+import {Center} from 'native-base';
 
 const SplashScreen = () => {
   return (
@@ -8,9 +9,11 @@ const SplashScreen = () => {
       <Text style={styles.text}>to</Text>
       <Text style={styles.text}>Waray Waray</Text>
       <Text style={styles.text}> Music Player</Text> */}
+
       <ImageBackground
         style={styles.image}
-        source={require('../assets/img/backgournd.jpg')}
+        source={require('../assets/img/screensplash.jpg')}
+        //source={require('../assets/img/backgournd.jpg')}
       />
     </View>
   );
@@ -21,10 +24,11 @@ export default SplashScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     alignContent: 'center',
     justifyContent: 'center',
-    // padding: 10,
+    //width: 300,
+    //padding: 10,
     // margin: 10,
     // borderRadius: 5,
   },
@@ -40,5 +44,8 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
+    // width: 'auto',
+    // height: 'auto',
+    // resizeMode: 'contain',
   },
 });

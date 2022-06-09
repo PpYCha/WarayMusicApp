@@ -1,14 +1,28 @@
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {AuthContext} from '../context/AuthContext';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
+import {firebase} from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 
-const EdtProfileScreen = () => {
+const EdtProfileScreen = ({route}) => {
   const [user, setUser] = useState([]);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [fullname, setFullname] = useState();
+
+  const {email1, fullName1, password1} = route.params;
+  console.log(email1);
+
+  useEffect(() => {
+    setEmail(email1);
+    setPassword(password1);
+    setFullname(fullName1);
+  }, []);
+
+  const handleSave = () => {};
+
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
@@ -27,22 +41,24 @@ const EdtProfileScreen = () => {
         <CustomInput
           placeholder="Email"
           onChangeText={text => setEmail(text)}
-          // value={name}
+          value={email}
         />
         <CustomInput
           placeholder="Password"
           onChangeText={text => setPassword(text)}
-          // value={name}
+          value={password}
         />
         <CustomInput
           placeholder="Fullname"
           onChangeText={text => setFullname(text)}
-          // value={name}
+          value={fullname}
         />
         <CustomButton
           text={'Save'}
           backgroundColor="gray"
-          // onPress={choosePhotoFromLibrary}
+          onPress={() => {
+            handleSave();
+          }}
         />
       </View>
     </View>

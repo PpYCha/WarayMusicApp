@@ -16,8 +16,13 @@ import UpdateSongScreen from './src/screens/UpdateSongScreen';
 import SongLyricsScreen from './src/screens/SongLyricsScreen';
 import SongListScreen from './src/screens/SongListScreen';
 import ViewSongSceen from './src/screens/ViewSongSceen';
+import HomeScreen from './src/screens/HomeScreen';
+import PlaySongScreen from './src/screens/PlaySongScreen';
+import KaraokeScreen from './src/screens/KaraokeScreen';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
 const App = () => {
   return (
@@ -83,6 +88,23 @@ const App = () => {
         <Stack.Screen
           name="ViewSongSceen"
           component={ViewSongSceen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="PlaySongScreen"
+          component={PlaySongScreen}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="KaraokeScreen"
+          component={KaraokeScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

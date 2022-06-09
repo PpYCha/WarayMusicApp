@@ -29,6 +29,7 @@ import TrackPlayer, {
 import Slider from 'react-native-slider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 import songs from '../model/data';
 import {firebase} from '@react-native-firebase/database';
@@ -161,7 +162,11 @@ const MusicPlayerScreen = ({seconds}) => {
           let item = childSnapshot.val();
           item.key = childSnapshot.key;
 
-          returnArr.push(item);
+          if (typeof item.minus === 'undefined') {
+            returnArr.push(item);
+          } else {
+            console.log('minus ine:', item.title, item.minus);
+          }
         });
 
         let newArray = returnArr.filter(item => item.verifiedSOng === true);
@@ -170,7 +175,7 @@ const MusicPlayerScreen = ({seconds}) => {
       });
     setSample('Sampleine');
 
-    console.log('List of songs', songList);
+    // console.log('List of songs', songList);
   };
 
   const loadTrack = () => {
@@ -217,8 +222,6 @@ const MusicPlayerScreen = ({seconds}) => {
     if (isLoading) {
       setIsLoading(false);
     }
-
-    console.log('user image:', user.image_url);
   };
 
   const skipToNext = () => {
@@ -292,7 +295,6 @@ const MusicPlayerScreen = ({seconds}) => {
             {/* songslider */}
             <View>
               <Slider
-                // style={style.progressBar}
                 value={progress.position}
                 minimumValue={0}
                 maximumValue={progress.duration}
@@ -326,6 +328,7 @@ const MusicPlayerScreen = ({seconds}) => {
                   name="play-skip-back-outline"
                   size={35}
                   color="#FFD369"
+                  //color="#FFf"
                 />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => togglePlayBack(playBackState)}>
@@ -336,6 +339,8 @@ const MusicPlayerScreen = ({seconds}) => {
                       : 'ios-play-circle'
                   }
                   size={75}
+                  //color="#07B719"
+                  //color="#FFf"
                   color="#FFD369"
                 />
               </TouchableOpacity>
@@ -343,7 +348,9 @@ const MusicPlayerScreen = ({seconds}) => {
                 <Ionicons
                   name="play-skip-forward-outline"
                   size={35}
+                  //color="#07B719"
                   color="#FFD369"
+                  //color="#FFf"
                 />
               </TouchableOpacity>
             </View>
@@ -395,10 +402,16 @@ const MusicPlayerScreen = ({seconds}) => {
                   />
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('MenuScreen')}>
-                  <Ionicons name="menu" size={30} color="#888888" />
-                </TouchableOpacity>
+                <>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('KaraokeScreen')}>
+                    <Entypo name="modern-mic" size={30} color="#888888" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('MenuScreen')}>
+                    <Ionicons name="menu" size={30} color="#888888" />
+                  </TouchableOpacity>
+                </>
               )}
             </View>
           </View>

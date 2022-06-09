@@ -31,7 +31,7 @@ const UselessTextInput = props => {
   );
 };
 
-const AddEditSongScreen = () => {
+const AddEditSongScreen = ({minus}) => {
   const [songDetails, setSongDetails] = useState(null);
   const [songTitle, setSongTitle] = useState('');
   const [artistName, setArtistName] = useState('');
@@ -113,6 +113,7 @@ const AddEditSongScreen = () => {
           id: Date.now(),
           verifiedSOng: 'false',
           artwork: imageUrl,
+          minus: minus,
         });
       Alert.alert('Success', 'Added song Successfully');
       setArtistName('');
@@ -276,7 +277,9 @@ const AddEditSongScreen = () => {
           <>
             <View style={{alignContent: 'center'}}>
               <ActivityIndicator size="large" />
-              <Text>{transferred}% transferred out of 100%</Text>
+              <Text style={styles.transfer}>
+                {transferred}% transferred out of 100%
+              </Text>
             </View>
           </>
         ) : (
@@ -313,5 +316,8 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
+  },
+  transfer: {
+    color: 'black',
   },
 });

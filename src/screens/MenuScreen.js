@@ -64,7 +64,12 @@ const MenuScreen = () => {
               .then(() => console.log('User signed out!'));
             navigation.navigate('Login');
           } else {
-            navigation.navigate(item.title);
+            console.log(user);
+            navigation.navigate(item.title, {
+              email1: user.email,
+              fullName1: user.name,
+              password1: user.password,
+            });
           }
         }}
         textColor={{color}}
